@@ -23,6 +23,8 @@ Route::get('/profile/{user}', [Controllers\ProfileController::class, 'show'])->n
 Route::middleware('auth')->group(function () {
     Route::get('/publish', [Controllers\PostController::class, 'create'])->name('post.create');
     Route::post('/publish', [Controllers\PostController::class, 'store']);
+
+    Route::post('/post/{post}/comment', [Controllers\PostController::class, 'comment'])->name('post.comment');
 });
 
 require __DIR__ . '/auth.php';

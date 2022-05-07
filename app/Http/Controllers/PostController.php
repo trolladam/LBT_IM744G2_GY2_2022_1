@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Topic;
 use App\Models\Post;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 
@@ -81,9 +82,8 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit(Post $post, Request $request)
     {
-        //
     }
 
     /**
@@ -107,6 +107,22 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         //
+    }
+
+    public function comment(Post $post, Request $request)
+    {
+        $request->validate([
+            'comment' => 'required|min:10',
+        ]);
+
+        $comment = new Comment;
+
+        $comment->message = $request->comment;
+        $comment->user()->associate($request->user());
+
+        $post->comments()->save($comment);
+
+        return redirect()->route('post.details', $post);
     }
 
     private function uploadImage(Request $request)
