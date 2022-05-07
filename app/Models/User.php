@@ -46,4 +46,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class, 'author_id');
     }
+
+    public function getAvatarAttribute()
+    {
+        $hash = md5($this->email);
+
+        return "https://www.gravatar.com/avatar/{$hash}?d=identicon";
+    }
 }

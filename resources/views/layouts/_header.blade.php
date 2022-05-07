@@ -25,6 +25,7 @@
                         <li class="nav-item dropdown">
                           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ Auth::user()->name }}
+                            <img class="rounded-circle" src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}" width="25" />
                           </a>
                           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Profile</a></li>
@@ -55,18 +56,11 @@
 
     <div class="nav-scroller py-1 mb-2">
         <nav class="nav d-flex justify-content-between">
-            <a class="p-2 link-secondary" href="#">World</a>
-            <a class="p-2 link-secondary" href="#">U.S.</a>
-            <a class="p-2 link-secondary" href="#">Technology</a>
-            <a class="p-2 link-secondary" href="#">Design</a>
-            <a class="p-2 link-secondary" href="#">Culture</a>
-            <a class="p-2 link-secondary" href="#">Business</a>
-            <a class="p-2 link-secondary" href="#">Politics</a>
-            <a class="p-2 link-secondary" href="#">Opinion</a>
-            <a class="p-2 link-secondary" href="#">Science</a>
-            <a class="p-2 link-secondary" href="#">Health</a>
-            <a class="p-2 link-secondary" href="#">Style</a>
-            <a class="p-2 link-secondary" href="#">Travel</a>
+            @foreach($topics as $topic)
+                <a class="p-2 link-secondary" href="{{ route('topic.details', $topic) }}">
+                    {{ $topic->name }}
+                </a>
+            @endforeach
         </nav>
     </div>
 </div>

@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Topic;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 
 class PostController extends Controller
 {
@@ -43,15 +43,23 @@ class PostController extends Controller
     {
         $request->validate([
             'title' => 'required|min:2|max:240',
+            'cover' => 'file|image',
             'topic_id' => 'required|exists:topics,id',
             'description' => 'required|min:10',
             'content' => 'required',
         ]);
 
-        // todo use authenticated user
-        $user = User::inRandomOrder()->first();
+        $post = $request
+            ->user()
+            ->posts()
+            ->create($request->except('_token'));
 
-        $post = $user->posts()->create($request->except('_token'));
+        $image = $this->uploadImage($request);
+
+        if ($image) {
+            $post->cover = $image->basename;
+            $post->save();
+        }
 
         return redirect()->route('post.details', $post);
     }
@@ -64,7 +72,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        dd($post);
+        return view('posts.show')->with('post', $post);
     }
 
     /**
@@ -99,5 +107,20 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         //
+    }
+
+    private function uploadImage(Request $request)
+    {
+        $file = $request->file('cover');
+
+        if (!$file) {
+            return;
+        }
+
+        $fileName = uniqid();
+
+        $cover = Image::make($file)->save(public_path("/uploads/posts/{$fileName}.{$file->extension()}"));
+
+        return $cover;
     }
 }
